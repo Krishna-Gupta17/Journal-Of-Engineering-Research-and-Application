@@ -1,5 +1,5 @@
 export const navItems = [
-  { label: 'Home', to: '/home' },
+  // { label: 'Home', to: '/home' },
   { label: 'About Us', to: '/' },
   { label: 'Aim & Scope', to: '/aim-scope' },
   { label: 'Editorial Board', to: '/editorial-board' },
@@ -67,16 +67,16 @@ export const editorialBoard = {
   ],
   managingEditor: [
     {
-      name: 'Dr. Manvendra Verma',
+      name: 'Dr. Abhishek Prakash Paswan',
       role: 'Managing Editor',
       institution:
-        'Department of Civil Engineering, Dr. Akhilesh Dash Gupta Institute of Technological and Management, Delhi, India',
+        'Department of Civil Engineering, MMMUT, Gorakhpur, India',
       email: 'editorialoffice@jera-journal.org',
     },
     {
       name: 'Mr. Rahul Kumar Meena, Ph.D.*',
       role: 'Managing Editor',
-      institution: 'Department of Civil Engineering, Delhi Technological University, Delhi, India',
+      institution: 'Department of Civil Engineering, National Institute of Technology, Delhi, India',
       email: 'managing.editor@jera-journal.org',
     },
   ],

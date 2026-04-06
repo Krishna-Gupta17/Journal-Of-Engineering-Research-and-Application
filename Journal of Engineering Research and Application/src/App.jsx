@@ -6,7 +6,7 @@ import AimScopePage from './pages/AimScopePage'
 import APCPage from './pages/APCPage'
 import AuthorGuidelinesPage from './pages/AuthorGuidelinesPage'
 import EditorialBoardPage from './pages/EditorialBoardPage'
-// import HomePage from './pages/HomePage'
+import AboutPage2 from './pages/AboutPage2'
 import IndexingPage from './pages/IndexingPage'
 import IssuesPage from './pages/IssuesPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -25,7 +25,7 @@ function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<AboutPage />} />
         <Route path="/home" element={<AboutPage />} />
-        <Route path="/about" element={<Navigate to="/" replace />} />
+        <Route path="/about" element={<AboutPage2 />} />
         <Route path="/aim-scope" element={<AimScopePage />} />
         <Route path="/editorial-board" element={<EditorialBoardPage />} />
         <Route path="/author-guidelines" element={<AuthorGuidelinesPage />} />
