@@ -53,6 +53,7 @@ export default function Navbar() {
           <span className="brand-text">
             Journal of Engineering Research and Application
           </span>
+          <span className="brand-issn">E-ISSN: 2583-3987</span>
         </Link>
 
         {/* Toggle Button */}
