@@ -6,6 +6,9 @@ import {
   createIssue as apiCreateIssue,
   createPaper as apiCreatePaper,
   createVolume as apiCreateVolume,
+  deleteIssue as apiDeleteIssue,
+  deletePaper as apiDeletePaper,
+  deleteVolume as apiDeleteVolume,
   fetchCatalog,
   verifyAdminSession,
 } from '../lib/journalApi'
@@ -167,6 +170,48 @@ export function JournalProvider({ children }) {
     }
   }
 
+  const removeVolume = async (volumeId) => {
+    if (!volumeId) {
+      return { ok: false, message: 'Volume id is required.' }
+    }
+
+    try {
+      await apiDeleteVolume(volumeId, adminToken)
+      await refreshCatalog()
+      return { ok: true }
+    } catch (apiError) {
+      return { ok: false, message: apiError.message || 'Failed to delete volume.' }
+    }
+  }
+
+  const removeIssue = async (issueId) => {
+    if (!issueId) {
+      return { ok: false, message: 'Issue id is required.' }
+    }
+
+    try {
+      await apiDeleteIssue(issueId, adminToken)
+      await refreshCatalog()
+      return { ok: true }
+    } catch (apiError) {
+      return { ok: false, message: apiError.message || 'Failed to delete issue.' }
+    }
+  }
+
+  const removePaper = async (paperId) => {
+    if (!paperId) {
+      return { ok: false, message: 'Paper id is required.' }
+    }
+
+    try {
+      await apiDeletePaper(paperId, adminToken)
+      await refreshCatalog()
+      return { ok: true }
+    } catch (apiError) {
+      return { ok: false, message: apiError.message || 'Failed to delete paper.' }
+    }
+  }
+
   const loginAdmin = async ({ username, password }) => {
     if (!username.trim() || !password) {
       return { ok: false, message: 'Username and password are required.' }
@@ -198,6 +243,9 @@ export function JournalProvider({ children }) {
         addVolume,
         addIssue,
         addPaper,
+        removeVolume,
+        removeIssue,
+        removePaper,
         loginAdmin,
         logoutAdmin,
       }}

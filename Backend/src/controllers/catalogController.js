@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma.js'
-import { uploadPdfBuffer } from '../lib/cloudinary.js'
+import { deletePdfByPublicId, uploadPdfBuffer } from '../lib/cloudinary.js'
 import { z } from 'zod'
 
 const volumeSchema = z.object({
@@ -166,6 +166,84 @@ export async function createPaper(request, response, next) {
 
     response.status(201).json({ paper, volumeId })
   } catch (error) {
+    next(error)
+  }
+}
+
+export async function deleteVolume(request, response, next) {
+  try {
+    const { volumeId } = request.params
+
+    if (!volumeId) {
+      response.status(400).json({ message: 'Volume id is required.' })
+      return
+    }
+
+    await prisma.volume.delete({ where: { id: volumeId } })
+    response.status(200).json({ ok: true })
+  } catch (error) {
+    if (error.code === 'P2025') {
+      response.status(404).json({ message: 'Volume not found.' })
+      return
+    }
+
+    next(error)
+  }
+}
+
+export async function deleteIssue(request, response, next) {
+  try {
+    const { issueId } = request.params
+
+    if (!issueId) {
+      response.status(400).json({ message: 'Issue id is required.' })
+      return
+    }
+
+    await prisma.issue.delete({ where: { id: issueId } })
+    response.status(200).json({ ok: true })
+  } catch (error) {
+    if (error.code === 'P2025') {
+      response.status(404).json({ message: 'Issue not found.' })
+      return
+    }
+
+    next(error)
+  }
+}
+
+export async function deletePaper(request, response, next) {
+  try {
+    const { paperId } = request.params
+
+    if (!paperId) {
+      response.status(400).json({ message: 'Paper id is required.' })
+      return
+    }
+
+    const existingPaper = await prisma.paper.findUnique({
+      where: { id: paperId },
+      select: {
+        id: true,
+        pdfPublicId: true,
+      },
+    })
+
+    if (!existingPaper) {
+      response.status(404).json({ message: 'Paper not found.' })
+      return
+    }
+
+    await prisma.paper.delete({ where: { id: paperId } })
+    await deletePdfByPublicId(existingPaper.pdfPublicId)
+
+    response.status(200).json({ ok: true })
+  } catch (error) {
+    if (error.code === 'P2025') {
+      response.status(404).json({ message: 'Paper not found.' })
+      return
+    }
+
     next(error)
   }
 }

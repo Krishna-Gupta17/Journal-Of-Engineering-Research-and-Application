@@ -24,7 +24,18 @@ function formatFileSize(size) {
 }
 
 export default function AdminPage() {
-  const { catalog, loading, error, addVolume, addIssue, addPaper, logoutAdmin } = useJournal()
+  const {
+    catalog,
+    loading,
+    error,
+    addVolume,
+    addIssue,
+    addPaper,
+    removeVolume,
+    removeIssue,
+    removePaper,
+    logoutAdmin,
+  } = useJournal()
   const [volumeForm, setVolumeForm] = useState(emptyVolumeForm)
   const [issueForm, setIssueForm] = useState(() => ({
     ...emptyIssueForm,
@@ -34,6 +45,8 @@ export default function AdminPage() {
     ...emptyPaperForm,
   }))
   const [feedback, setFeedback] = useState('')
+  const [busyDeleteKey, setBusyDeleteKey] = useState('')
+  const [deleteDialog, setDeleteDialog] = useState(null)
 
   const defaultIssueVolumeId = catalog[0]?.id ?? ''
   const paperVolumeId = paperForm.volumeId || defaultIssueVolumeId
@@ -48,6 +61,8 @@ export default function AdminPage() {
     () => paperVolume?.issues.find((issue) => issue.id === (paperForm.issueId || defaultPaperIssueId)),
     [defaultPaperIssueId, paperForm.issueId, paperVolume],
   )
+  const dialogDeleteKey = deleteDialog ? `${deleteDialog.type}:${deleteDialog.id}` : ''
+  const isDialogBusy = dialogDeleteKey && busyDeleteKey === dialogDeleteKey
 
   const handleCreateVolume = async (event) => {
     event.preventDefault()
@@ -119,6 +134,67 @@ export default function AdminPage() {
       logoutAdmin()
     }
 
+    setFeedback(result.message)
+  }
+
+  const requestDelete = ({ type, id, name, volumeName }) => {
+    if (!type || !id || !name) {
+      return
+    }
+
+    const messageByType = {
+      volume: `Delete ${name}? This will remove all associated issues and papers.`,
+      issue: `Delete ${name} from ${volumeName}? All papers in this issue will be removed.`,
+      paper: `Delete paper ${name}? This action cannot be undone.`,
+    }
+
+    const labelByType = {
+      volume: 'Volume',
+      issue: 'Issue',
+      paper: 'Paper',
+    }
+
+    setDeleteDialog({
+      type,
+      id,
+      name,
+      entityLabel: labelByType[type],
+      message: messageByType[type],
+    })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteDialog) {
+      return
+    }
+
+    const { type, id, name, entityLabel } = deleteDialog
+    const deleteKey = `${type}:${id}`
+    setBusyDeleteKey(deleteKey)
+
+    let result
+    if (type === 'volume') {
+      result = await removeVolume(id)
+    } else if (type === 'issue') {
+      result = await removeIssue(id)
+    } else {
+      result = await removePaper(id)
+    }
+
+    setBusyDeleteKey('')
+
+    if (result.ok) {
+      setDeleteDialog(null)
+      setFeedback(`Deleted ${entityLabel.toLowerCase()} “${name}”.`)
+      return
+    }
+
+    if (result.message === 'Admin authentication required.' || result.message === 'Invalid or expired admin session.') {
+      logoutAdmin()
+      return
+    }
+
+    setDeleteDialog(null)
     setFeedback(result.message)
   }
 
@@ -311,6 +387,138 @@ export default function AdminPage() {
         <div className="container admin-footer-note">
           <p className="status-banner">{feedback || 'Use this dashboard to maintain the journal catalog.'}</p>
         </div>
+
+        <div className="container admin-catalog-manager-wrap">
+          <article className="auth-card admin-catalog-manager">
+            <p className="eyebrow">Catalog Manager</p>
+            <h2>Volumes, Issues, and Papers</h2>
+
+            {catalog.length ? (
+              <div className="admin-catalog-list">
+                {catalog.map((volume) => (
+                  <section key={volume.id} className="admin-entity admin-volume">
+                    <div className="admin-entity-head">
+                      <div>
+                        <h3>{volume.name}</h3>
+                        <p>{volume.issues.length} issues</p>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={() => requestDelete({ type: 'volume', id: volume.id, name: volume.name })}
+                        disabled={busyDeleteKey === `volume:${volume.id}`}
+                      >
+                        {busyDeleteKey === `volume:${volume.id}` ? 'Deleting...' : 'Delete Volume'}
+                      </button>
+                    </div>
+
+                    {volume.issues.length ? (
+                      <div className="admin-issue-list">
+                        {volume.issues.map((issue) => (
+                          <section key={issue.id} className="admin-entity admin-issue">
+                            <div className="admin-entity-head">
+                              <div>
+                                <h4>{issue.name}</h4>
+                                <p>{issue.papers.length} papers</p>
+                              </div>
+                              <button
+                                type="button"
+                                className="btn btn-danger btn-small"
+                                onClick={() =>
+                                  requestDelete({
+                                    type: 'issue',
+                                    id: issue.id,
+                                    name: issue.name,
+                                    volumeName: volume.name,
+                                  })
+                                }
+                                disabled={busyDeleteKey === `issue:${issue.id}`}
+                              >
+                                {busyDeleteKey === `issue:${issue.id}` ? 'Deleting...' : 'Delete Issue'}
+                              </button>
+                            </div>
+
+                            {issue.papers.length ? (
+                              <ul className="admin-paper-list" role="list">
+                                {issue.papers.map((paper) => (
+                                  <li key={paper.id} className="admin-paper-row">
+                                    <div className="admin-paper-meta">
+                                      <strong>{paper.title}</strong>
+                                      <span>{paper.authorName}</span>
+                                    </div>
+
+                                    <div className="admin-paper-actions">
+                                      <a
+                                        className="btn btn-outline btn-small"
+                                        href={paper.pdfPreviewUrl || paper.pdfUrl}
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                      >
+                                        View PDF
+                                      </a>
+                                      <button
+                                        type="button"
+                                        className="btn btn-danger btn-small"
+                                        onClick={() =>
+                                          requestDelete({
+                                            type: 'paper',
+                                            id: paper.id,
+                                            name: paper.title,
+                                          })
+                                        }
+                                        disabled={busyDeleteKey === `paper:${paper.id}`}
+                                      >
+                                        {busyDeleteKey === `paper:${paper.id}` ? 'Deleting...' : 'Delete Paper'}
+                                      </button>
+                                    </div>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="input-help">No papers in this issue.</p>
+                            )}
+                          </section>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="input-help">No issues in this volume.</p>
+                    )}
+                  </section>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <h3>No volumes yet</h3>
+                <p>Create a volume from the form above to start managing the catalog.</p>
+              </div>
+            )}
+          </article>
+        </div>
+
+        {deleteDialog ? (
+          <div className="delete-modal-backdrop" role="presentation" onClick={() => setDeleteDialog(null)}>
+            <section
+              className="delete-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="delete-modal-title"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <p className="eyebrow">Confirm Deletion</p>
+              <h3 id="delete-modal-title">Delete {deleteDialog.entityLabel}?</h3>
+              <p className="delete-modal-message">{deleteDialog.message}</p>
+
+              <div className="form-actions">
+                <button type="button" className="btn btn-outline" onClick={() => setDeleteDialog(null)} disabled={isDialogBusy}>
+                  Cancel
+                </button>
+                <button type="button" className="btn btn-danger" onClick={handleConfirmDelete} disabled={isDialogBusy}>
+                  {isDialogBusy ? 'Deleting...' : `Delete ${deleteDialog.entityLabel}`}
+                </button>
+              </div>
+            </section>
+          </div>
+        ) : null}
       </section>
     </>
   )

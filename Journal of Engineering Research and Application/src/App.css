@@ -326,6 +326,21 @@ main {
   color: var(--secondary);
 }
 
+.btn-danger {
+  background: #d64545;
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(214, 69, 69, 0.24);
+}
+
+.btn-danger:hover {
+  background: #bf3737;
+}
+
+.btn-small {
+  padding: 0.52rem 0.92rem;
+  font-size: 0.84rem;
+}
+
 .section {
   padding: 3.2rem 0;
   position: relative;
@@ -647,6 +662,97 @@ main {
   margin-top: 1rem;
 }
 
+.admin-catalog-manager-wrap {
+  margin-top: 1rem;
+}
+
+.admin-catalog-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-entity {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: linear-gradient(180deg, #fff 0%, rgba(243, 248, 252, 0.55) 100%);
+}
+
+.admin-volume {
+  box-shadow: 0 10px 20px rgba(11, 60, 93, 0.06);
+}
+
+.admin-entity-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.7rem;
+}
+
+.admin-entity-head h3,
+.admin-entity-head h4 {
+  margin-bottom: 0.12rem;
+}
+
+.admin-entity-head p {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+.admin-issue-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-issue {
+  margin-left: 0.5rem;
+  background: #fff;
+}
+
+.admin-paper-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.admin-paper-row {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.72rem 0.82rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  background: #fff;
+}
+
+.admin-paper-meta {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.admin-paper-meta strong {
+  font-size: 0.95rem;
+  color: var(--primary);
+  overflow-wrap: anywhere;
+}
+
+.admin-paper-meta span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.admin-paper-actions {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .journal-browser {
   display: grid;
   grid-template-columns: 0.95fr 1.55fr;
@@ -868,6 +974,37 @@ main {
 .pdf-fallback-note a {
   color: var(--secondary);
   font-weight: 700;
+}
+
+.delete-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  padding: 1rem;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 24, 35, 0.62);
+  backdrop-filter: blur(4px);
+}
+
+.delete-modal {
+  width: min(520px, 100%);
+  padding: 1.2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(214, 69, 69, 0.35);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(214, 69, 69, 0.08), transparent 36%),
+    linear-gradient(180deg, #fff 0%, #fff5f5 100%);
+  box-shadow: 0 26px 48px rgba(8, 20, 30, 0.26);
+}
+
+.delete-modal h3 {
+  margin-bottom: 0.6rem;
+}
+
+.delete-modal-message {
+  margin-bottom: 1rem;
+  color: var(--ink);
 }
 
 .form-actions {
@@ -1113,8 +1250,15 @@ main {
   }
 
   .paper-card,
-  .pdf-modal-header {
+  .pdf-modal-header,
+  .admin-paper-row,
+  .admin-entity-head {
     flex-direction: column;
+  }
+
+  .admin-paper-actions {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .pdf-modal {

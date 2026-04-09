@@ -27,3 +27,11 @@ export function uploadPdfBuffer(buffer, fileName) {
     uploadStream.end(buffer)
   })
 }
+
+export function deletePdfByPublicId(publicId) {
+  if (!publicId) {
+    return Promise.resolve(null)
+  }
+
+  return cloudinary.uploader.destroy(publicId, { resource_type: 'raw' })
+}

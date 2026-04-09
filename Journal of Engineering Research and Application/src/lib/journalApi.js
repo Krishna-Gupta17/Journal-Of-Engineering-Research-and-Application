@@ -91,3 +91,24 @@ export async function createPaper({ volumeId, issueId, title, authorName, pdfFil
     body: formData,
   })
 }
+
+export async function deleteVolume(volumeId, token) {
+  return request(`/admin/volumes/${volumeId}`, {
+    method: 'DELETE',
+    headers: buildHeaders(token),
+  })
+}
+
+export async function deleteIssue(issueId, token) {
+  return request(`/admin/issues/${issueId}`, {
+    method: 'DELETE',
+    headers: buildHeaders(token),
+  })
+}
+
+export async function deletePaper(paperId, token) {
+  return request(`/admin/papers/${paperId}`, {
+    method: 'DELETE',
+    headers: buildHeaders(token),
+  })
+}
