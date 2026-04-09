@@ -1,17 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { navItems } from '../data/siteContent'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const location = useLocation()
   const navRef = useRef()
-
-  // Close menu on route change
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [location])
 
   // Scroll effect (shadow + blur)
   useEffect(() => {
@@ -80,6 +74,7 @@ export default function Navbar() {
                 <NavLink
                   to={item.to}
                   end={item.to === '/'}
+                  onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     isActive ? 'nav-link active' : 'nav-link'
                   }

@@ -8,6 +8,7 @@ export const navItems = [
   { label: 'Indexing', to: '/indexing' },
   { label: 'APC', to: '/apc' },
   { label: 'Issues', to: '/issues' },
+  // { label: 'Admin', to: '/adminj' },
 ]
 
 export const journal = {

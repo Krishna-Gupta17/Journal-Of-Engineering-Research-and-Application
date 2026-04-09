@@ -14,3 +14,11 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Journal API Connection
+
+The journal admin and issues pages now use the backend API.
+
+- Local development uses the Vite proxy for `/api` requests.
+- If the API runs on a different origin, set `VITE_API_BASE_URL` to the backend base URL, including `/api`.
+- Volume, issue, and paper creation now persist through the Express, Prisma, and Cloudinary backend.
