@@ -28,6 +28,14 @@ router.post('/admin/login', async (request, response, next) => {
       return
     }
 
+    if (!prisma.user || typeof prisma.user.findUnique !== 'function') {
+      response.status(500).json({
+        message:
+          'User authentication model is not available on this deployment. Run Prisma generate and apply latest migrations.',
+      })
+      return
+    }
+
     const adminUser = await prisma.user.findUnique({
       where: { username },
       select: {
@@ -68,6 +76,14 @@ router.post('/admin/login', async (request, response, next) => {
 
 router.get('/admin/session', requireAdminAuth, async (request, response, next) => {
   try {
+    if (!prisma.user || typeof prisma.user.findFirst !== 'function') {
+      response.status(500).json({
+        message:
+          'User authentication model is not available on this deployment. Run Prisma generate and apply latest migrations.',
+      })
+      return
+    }
+
     const adminUser = await prisma.user.findFirst({
       where: {
         id: request.admin.userId,
