@@ -22,7 +22,7 @@ export default function Footer() {
               <Link to="/submission">Submission</Link>
             </li>
             <li>
-              <Link to="/issues">Sitemap</Link>
+              <Link to="/issues">Archives</Link>
             </li>
           </ul>
         </nav>

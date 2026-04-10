@@ -7,7 +7,7 @@ export const navItems = [
   { label: 'Submission', to: '/submission' },
   { label: 'Indexing', to: '/indexing' },
   { label: 'APC', to: '/apc' },
-  { label: 'Issues', to: '/issues' },
+  { label: 'Archives', to: '/issues' },
   // { label: 'Admin', to: '/adminj' },
 ]
 

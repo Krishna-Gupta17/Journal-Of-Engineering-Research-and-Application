@@ -25,25 +25,33 @@ function mapVolume(volume) {
   return {
     id: volume.id,
     name: volume.name,
-    issues: (volume.issues || []).map((issue) => ({
-      id: issue.id,
-      name: issue.name,
-      papers: (issue.papers || []).map((paper) => ({
-        id: paper.id,
-        title: paper.title,
-        authorName: paper.authorName,
-        pdfUrl: paper.pdfUrl,
-        pdfPreviewUrl: `${apiBaseUrl}/public/papers/${paper.id}/pdf`,
-        fileName: paper.fileName,
-        uploadedAt: paper.uploadedAt,
+    createdAt: volume.createdAt,
+    issues: (volume.issues || [])
+      .slice()
+      .sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime())
+      .map((issue) => ({
+        id: issue.id,
+        name: issue.name,
+        createdAt: issue.createdAt,
+        papers: (issue.papers || []).map((paper) => ({
+          id: paper.id,
+          title: paper.title,
+          authorName: paper.authorName,
+          pdfUrl: paper.pdfUrl,
+          pdfPreviewUrl: `${apiBaseUrl}/public/papers/${paper.id}/pdf`,
+          fileName: paper.fileName,
+          uploadedAt: paper.uploadedAt,
+        })),
       })),
-    })),
   }
 }
 
 export async function fetchCatalog() {
   const data = await request('/public/volumes')
-  return (data.volumes || []).map(mapVolume)
+  return (data.volumes || [])
+    .slice()
+    .sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime())
+    .map(mapVolume)
 }
 
 export async function adminLogin(username, password) {

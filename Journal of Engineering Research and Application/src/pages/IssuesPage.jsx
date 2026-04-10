@@ -9,159 +9,154 @@ export default function IssuesPage() {
   const [selectedIssueId, setSelectedIssueId] = useState('')
   const [previewPaper, setPreviewPaper] = useState(null)
 
-  const catalogStats = useMemo(() => {
-    const volumes = catalog.length
-    const issues = catalog.reduce((sum, volume) => sum + volume.issues.length, 0)
-    const papers = catalog.reduce(
-      (sum, volume) => sum + volume.issues.reduce((issueSum, issue) => issueSum + issue.papers.length, 0),
-      0,
-    )
-
-    return { volumes, issues, papers }
-  }, [catalog])
-
   const selectedVolume = useMemo(
-    () => catalog.find((volume) => volume.id === selectedVolumeId) ?? catalog[0],
+    () => catalog.find((volume) => volume.id === selectedVolumeId) ?? null,
     [catalog, selectedVolumeId],
   )
 
-  const selectedIssue =
-    selectedVolume?.issues.find((issue) => issue.id === selectedIssueId) ?? selectedVolume?.issues[0]
+  const selectedIssue = useMemo(
+    () => selectedVolume?.issues.find((issue) => issue.id === selectedIssueId) ?? null,
+    [selectedVolume, selectedIssueId],
+  )
+
+  const showVolumeBoxes = !selectedVolume
+  const showIssueBoxes = Boolean(selectedVolume) && !selectedIssue
+  const showPapers = Boolean(selectedIssue)
 
   return (
     <>
       <PageHeader
-        title="Issues"
-        subtitle="Browse volumes, drill into issues, and open attached papers in a PDF preview."
+        title="Archives"
+        subtitle="Browse volumes, drill into archives, and open attached papers in a PDF preview."
       />
 
       <section className="section issues-section">
         <div className="container">
-          {error ? <p className="status-banner issues-status">Backend connection issue: {error}</p> : null}
+          {error ? <p className="status-banner issues-status">Backend connection problem: {error}</p> : null}
 
-          <section className="issues-summary" aria-label="Journal catalog summary">
-            <article className="summary-card">
-              <p className="summary-label">Volumes</p>
-              <strong>{catalogStats.volumes}</strong>
-            </article>
-            <article className="summary-card">
-              <p className="summary-label">Issues</p>
-              <strong>{catalogStats.issues}</strong>
-            </article>
-            <article className="summary-card">
-              <p className="summary-label">Papers</p>
-              <strong>{catalogStats.papers}</strong>
-            </article>
-          </section>
+          <section className="browser-panel issues-flow-panel">
+            <div className="panel-heading">
+              <p className="eyebrow">Browse Catalog</p>
+              <h2>Volumes and Archives</h2>
+            </div>
 
-          <div className="journal-browser">
-            <aside className="browser-panel">
-              <div className="panel-heading">
-                <p className="eyebrow">Volumes</p>
-                <h2>Available Volumes</h2>
+            {loading && !catalog.length ? (
+              <div className="empty-state">
+                <h3>Loading catalog</h3>
+                <p>Fetching volumes from the backend.</p>
               </div>
+            ) : null}
 
-              <div className="volume-list" role="list" aria-label="Journal volumes">
-                {loading && !catalog.length ? (
+            {showVolumeBoxes ? (
+              <>
+                <div className="issues-grid compact-box-grid" role="list" aria-label="Journal volumes">
+                  {catalog.map((volume) => (
+                    <button
+                      key={volume.id}
+                      type="button"
+                      className="journal-card journal-card-button compact-choice-box"
+                      onClick={() => {
+                        setSelectedVolumeId(volume.id)
+                        setSelectedIssueId('')
+                        setPreviewPaper(null)
+                      }}
+                    >
+                      <strong>{volume.name}</strong>
+                    </button>
+                  ))}
+                </div>
+
+                {!catalog.length && !loading ? (
                   <div className="empty-state">
-                    <h3>Loading catalog</h3>
-                    <p>Fetching volumes from the backend.</p>
+                    <h3>No volumes yet</h3>
+                    <p>Create a volume from the admin dashboard to make it visible here.</p>
                   </div>
-                ) : (
-                  catalog.map((volume) => {
-                    const paperCount = volume.issues.reduce((total, issue) => total + issue.papers.length, 0)
-                    const isActive = volume.id === selectedVolume?.id
+                ) : null}
+              </>
+            ) : null}
 
-                    return (
-                      <button
-                        key={volume.id}
-                        type="button"
-                        className={`journal-card journal-card-button ${isActive ? 'active' : ''}`}
-                        onClick={() => {
-                          setSelectedVolumeId(volume.id)
-                          setSelectedIssueId(volume.issues[0]?.id ?? '')
-                          setPreviewPaper(null)
-                        }}
-                      >
-                        <strong>{volume.name}</strong>
-                        <span>{volume.issues.length} issues</span>
-                        <span>{paperCount} papers</span>
-                      </button>
-                    )
-                  })
-                )}
-              </div>
-            </aside>
+            {selectedVolume ? (
+              <button
+                type="button"
+                className="fake-dropdown-trigger"
+                onClick={() => {
+                  setSelectedVolumeId('')
+                  setSelectedIssueId('')
+                  setPreviewPaper(null)
+                }}
+                aria-label="Change selected volume"
+              >
+                <span className="fake-dropdown-label">Volume</span>
+                <span className="fake-dropdown-value">{selectedVolume.name}</span>
+                <span className="fake-dropdown-caret">▾</span>
+              </button>
+            ) : null}
 
-            <section className="browser-panel browser-detail">
-              <div className="panel-heading">
-                <p className="eyebrow">Issues</p>
-                <h2>{selectedVolume ? selectedVolume.name : 'No volume selected'}</h2>
-              </div>
-
-              {selectedVolume?.issues.length ? (
-                <div className="issue-list" role="list" aria-label="Issues in the selected volume">
-                  {selectedVolume.issues.map((issue) => {
-                    const isActive = issue.id === selectedIssue?.id
-
-                    return (
-                      <button
-                        key={issue.id}
-                        type="button"
-                        className={`journal-card journal-card-button issue-card ${isActive ? 'active' : ''}`}
-                        onClick={() => {
-                          setSelectedIssueId(issue.id)
-                          setPreviewPaper(null)
-                        }}
-                      >
-                        <strong>{issue.name}</strong>
-                        <span>{issue.papers.length} papers</span>
-                      </button>
-                    )
-                  })}
+            {showIssueBoxes ? (
+              selectedVolume.issues.length ? (
+                <div className="issues-grid compact-box-grid" role="list" aria-label="Archives in selected volume">
+                  {selectedVolume.issues.map((issue) => (
+                    <button
+                      key={issue.id}
+                      type="button"
+                      className="journal-card journal-card-button compact-choice-box"
+                      onClick={() => {
+                        setSelectedIssueId(issue.id)
+                        setPreviewPaper(null)
+                      }}
+                    >
+                      <strong>{issue.name}</strong>
+                    </button>
+                  ))}
                 </div>
               ) : (
                 <div className="empty-state">
-                  <h3>No issues yet</h3>
-                  <p>Create an issue from the admin page to make it visible here.</p>
+                  <h3>No archives yet</h3>
+                  <p>Create an archive from the admin page to make it visible here.</p>
                 </div>
-              )}
+              )
+            ) : null}
 
-              <div className="papers-panel">
-                <div className="panel-heading">
-                  <p className="eyebrow">Papers</p>
-                  <h2>{selectedIssue ? selectedIssue.name : 'Select an issue'}</h2>
-                </div>
+            {showPapers ? (
+              <>
+                <button
+                  type="button"
+                  className="fake-dropdown-trigger"
+                  onClick={() => {
+                    setSelectedIssueId('')
+                    setPreviewPaper(null)
+                  }}
+                  aria-label="Change selected archive"
+                >
+                  <span className="fake-dropdown-label">Archive</span>
+                  <span className="fake-dropdown-value">{selectedIssue.name}</span>
+                  <span className="fake-dropdown-caret">▾</span>
+                </button>
 
-                {selectedIssue?.papers.length ? (
-                  <div className="paper-list">
+                {selectedIssue.papers.length ? (
+                  <div className="paper-list compact-paper-list">
                     {selectedIssue.papers.map((paper) => (
-                      <article key={paper.id} className="paper-card">
+                      <article key={paper.id} className="paper-card compact-paper-card">
                         <div className="paper-content">
                           <h3>{paper.title}</h3>
-                          <p className="paper-author">{paper.authorName}</p>
-                          <p className="paper-meta">{paper.fileName}</p>
+                          <p className="paper-author">Author: {paper.authorName}</p>
                         </div>
 
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          onClick={() => setPreviewPaper(paper)}
-                        >
-                          Open Preview
+                        <button type="button" className="btn btn-primary btn-small" onClick={() => setPreviewPaper(paper)}>
+                          View PDF
                         </button>
                       </article>
                     ))}
                   </div>
                 ) : (
                   <div className="empty-state">
-                    <h3>No papers in this issue</h3>
+                    <h3>No papers in this archive</h3>
                     <p>Upload a paper from the admin dashboard to see it listed here.</p>
                   </div>
                 )}
-              </div>
-            </section>
-          </div>
+              </>
+            ) : null}
+          </section>
         </div>
       </section>
 

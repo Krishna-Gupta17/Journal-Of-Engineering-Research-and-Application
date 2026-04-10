@@ -22,9 +22,11 @@ function mapVolumes(volumes) {
   return volumes.map((volume) => ({
     id: volume.id,
     name: volume.name,
+    createdAt: volume.createdAt,
     issues: volume.issues.map((issue) => ({
       id: issue.id,
       name: issue.name,
+      createdAt: issue.createdAt,
       papers: issue.papers.map((paper) => ({
         id: paper.id,
         title: paper.title,
@@ -45,7 +47,7 @@ function toSafePdfFilename(name) {
 export async function listVolumes(_request, response, next) {
   try {
     const volumes = await prisma.volume.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
       include: {
         issues: {
           orderBy: { createdAt: 'asc' },

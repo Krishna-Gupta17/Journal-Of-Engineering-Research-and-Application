@@ -44,6 +44,8 @@ export default function AdminPage() {
   const [paperForm, setPaperForm] = useState(() => ({
     ...emptyPaperForm,
   }))
+  const [managerVolumeId, setManagerVolumeId] = useState('')
+  const [managerIssueId, setManagerIssueId] = useState('')
   const [feedback, setFeedback] = useState('')
   const [busyDeleteKey, setBusyDeleteKey] = useState('')
   const [deleteDialog, setDeleteDialog] = useState(null)
@@ -61,6 +63,17 @@ export default function AdminPage() {
     () => paperVolume?.issues.find((issue) => issue.id === (paperForm.issueId || defaultPaperIssueId)),
     [defaultPaperIssueId, paperForm.issueId, paperVolume],
   )
+  const managerVolume = useMemo(
+    () => catalog.find((volume) => volume.id === managerVolumeId) ?? null,
+    [catalog, managerVolumeId],
+  )
+  const managerIssue = useMemo(
+    () => managerVolume?.issues.find((issue) => issue.id === managerIssueId) ?? null,
+    [managerVolume, managerIssueId],
+  )
+  const showManagerVolumeBoxes = !managerVolume
+  const showManagerIssueBoxes = Boolean(managerVolume) && !managerIssue
+  const showManagerPapers = Boolean(managerIssue)
   const dialogDeleteKey = deleteDialog ? `${deleteDialog.type}:${deleteDialog.id}` : ''
   const isDialogBusy = dialogDeleteKey && busyDeleteKey === dialogDeleteKey
 
@@ -394,97 +407,153 @@ export default function AdminPage() {
             <h2>Volumes, Issues, and Papers</h2>
 
             {catalog.length ? (
-              <div className="admin-catalog-list">
-                {catalog.map((volume) => (
-                  <section key={volume.id} className="admin-entity admin-volume">
-                    <div className="admin-entity-head">
-                      <div>
-                        <h3>{volume.name}</h3>
-                        <p>{volume.issues.length} issues</p>
-                      </div>
+              <div className="issues-flow-panel admin-showcase-flow">
+                {showManagerVolumeBoxes ? (
+                  <>
+                    <div className="issues-grid compact-box-grid" role="list" aria-label="Catalog volumes">
+                      {catalog.map((volume) => (
+                        <button
+                          key={volume.id}
+                          type="button"
+                          className="journal-card journal-card-button compact-choice-box"
+                          onClick={() => {
+                            setManagerVolumeId(volume.id)
+                            setManagerIssueId('')
+                          }}
+                        >
+                          <strong>{volume.name}</strong>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
+
+                {managerVolume ? (
+                  <>
+                    <button
+                      type="button"
+                      className="fake-dropdown-trigger"
+                      onClick={() => {
+                        setManagerVolumeId('')
+                        setManagerIssueId('')
+                      }}
+                      aria-label="Change selected volume"
+                    >
+                      <span className="fake-dropdown-label">Volume</span>
+                      <span className="fake-dropdown-value">{managerVolume.name}</span>
+                      <span className="fake-dropdown-caret">▾</span>
+                    </button>
+
+                    <div className="admin-showcase-actions">
                       <button
                         type="button"
-                        className="btn btn-danger"
-                        onClick={() => requestDelete({ type: 'volume', id: volume.id, name: volume.name })}
-                        disabled={busyDeleteKey === `volume:${volume.id}`}
+                        className="btn btn-danger btn-small"
+                        onClick={() => requestDelete({ type: 'volume', id: managerVolume.id, name: managerVolume.name })}
+                        disabled={busyDeleteKey === `volume:${managerVolume.id}`}
                       >
-                        {busyDeleteKey === `volume:${volume.id}` ? 'Deleting...' : 'Delete Volume'}
+                        {busyDeleteKey === `volume:${managerVolume.id}` ? 'Deleting...' : 'Delete Volume'}
+                      </button>
+                    </div>
+                  </>
+                ) : null}
+
+                {showManagerIssueBoxes ? (
+                  managerVolume.issues.length ? (
+                    <div className="issues-grid compact-box-grid" role="list" aria-label="Issues in selected volume">
+                      {managerVolume.issues.map((issue) => (
+                        <button
+                          key={issue.id}
+                          type="button"
+                          className="journal-card journal-card-button compact-choice-box"
+                          onClick={() => setManagerIssueId(issue.id)}
+                        >
+                          <strong>{issue.name}</strong>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="empty-state">
+                      <h3>No issues yet</h3>
+                      <p>Create an issue from the form above to add papers.</p>
+                    </div>
+                  )
+                ) : null}
+
+                {showManagerPapers ? (
+                  <>
+                    <button
+                      type="button"
+                      className="fake-dropdown-trigger"
+                      onClick={() => setManagerIssueId('')}
+                      aria-label="Change selected issue"
+                    >
+                      <span className="fake-dropdown-label">Issue</span>
+                      <span className="fake-dropdown-value">{managerIssue.name}</span>
+                      <span className="fake-dropdown-caret">▾</span>
+                    </button>
+
+                    <div className="admin-showcase-actions">
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-small"
+                        onClick={() =>
+                          requestDelete({
+                            type: 'issue',
+                            id: managerIssue.id,
+                            name: managerIssue.name,
+                            volumeName: managerVolume.name,
+                          })
+                        }
+                        disabled={busyDeleteKey === `issue:${managerIssue.id}`}
+                      >
+                        {busyDeleteKey === `issue:${managerIssue.id}` ? 'Deleting...' : 'Delete Issue'}
                       </button>
                     </div>
 
-                    {volume.issues.length ? (
-                      <div className="admin-issue-list">
-                        {volume.issues.map((issue) => (
-                          <section key={issue.id} className="admin-entity admin-issue">
-                            <div className="admin-entity-head">
-                              <div>
-                                <h4>{issue.name}</h4>
-                                <p>{issue.papers.length} papers</p>
-                              </div>
+                    {managerIssue.papers.length ? (
+                      <div className="paper-list compact-paper-list">
+                        {managerIssue.papers.map((paper) => (
+                          <article key={paper.id} className="paper-card compact-paper-card">
+                            <div className="paper-content">
+                              <h3>{paper.title}</h3>
+                              <p className="paper-author">Author: {paper.authorName}</p>
+                            </div>
+
+                            <div className="admin-paper-actions">
+                              <a
+                                className="btn btn-outline btn-small"
+                                href={paper.pdfPreviewUrl || paper.pdfUrl}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                View PDF
+                              </a>
                               <button
                                 type="button"
                                 className="btn btn-danger btn-small"
                                 onClick={() =>
                                   requestDelete({
-                                    type: 'issue',
-                                    id: issue.id,
-                                    name: issue.name,
-                                    volumeName: volume.name,
+                                    type: 'paper',
+                                    id: paper.id,
+                                    name: paper.title,
                                   })
                                 }
-                                disabled={busyDeleteKey === `issue:${issue.id}`}
+                                disabled={busyDeleteKey === `paper:${paper.id}`}
                               >
-                                {busyDeleteKey === `issue:${issue.id}` ? 'Deleting...' : 'Delete Issue'}
+                                {busyDeleteKey === `paper:${paper.id}` ? 'Deleting...' : 'Delete Paper'}
                               </button>
                             </div>
-
-                            {issue.papers.length ? (
-                              <ul className="admin-paper-list" role="list">
-                                {issue.papers.map((paper) => (
-                                  <li key={paper.id} className="admin-paper-row">
-                                    <div className="admin-paper-meta">
-                                      <strong>{paper.title}</strong>
-                                      <span>{paper.authorName}</span>
-                                    </div>
-
-                                    <div className="admin-paper-actions">
-                                      <a
-                                        className="btn btn-outline btn-small"
-                                        href={paper.pdfPreviewUrl || paper.pdfUrl}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                      >
-                                        View PDF
-                                      </a>
-                                      <button
-                                        type="button"
-                                        className="btn btn-danger btn-small"
-                                        onClick={() =>
-                                          requestDelete({
-                                            type: 'paper',
-                                            id: paper.id,
-                                            name: paper.title,
-                                          })
-                                        }
-                                        disabled={busyDeleteKey === `paper:${paper.id}`}
-                                      >
-                                        {busyDeleteKey === `paper:${paper.id}` ? 'Deleting...' : 'Delete Paper'}
-                                      </button>
-                                    </div>
-                                  </li>
-                                ))}
-                              </ul>
-                            ) : (
-                              <p className="input-help">No papers in this issue.</p>
-                            )}
-                          </section>
+                          </article>
                         ))}
                       </div>
                     ) : (
-                      <p className="input-help">No issues in this volume.</p>
+                      <div className="empty-state">
+                        <h3>No papers in this issue</h3>
+                        <p>Upload a paper from the form above to display it here.</p>
+                      </div>
                     )}
-                  </section>
-                ))}
+                  </>
+                ) : null}
               </div>
             ) : (
               <div className="empty-state">

@@ -1,6 +1,8 @@
 import { Router } from 'express'
+import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
+import prisma from '../lib/prisma.js'
 import { requireAdminAuth } from '../middleware/authMiddleware.js'
 
 const loginSchema = z.object({
@@ -10,7 +12,7 @@ const loginSchema = z.object({
 
 const router = Router()
 
-router.post('/admin/login', (request, response) => {
+router.post('/admin/login', async (request, response, next) => {
   const parsedBody = loginSchema.safeParse(request.body)
 
   if (!parsedBody.success) {
@@ -18,39 +20,79 @@ router.post('/admin/login', (request, response) => {
     return
   }
 
-  const { username, password } = parsedBody.data
-  const expectedUsername = process.env.ADMIN_USERNAME
-  const expectedPassword = process.env.ADMIN_PASSWORD
+  try {
+    const { username, password } = parsedBody.data
 
-  if (!expectedUsername || !expectedPassword || !process.env.JWT_SECRET) {
-    response.status(500).json({ message: 'Admin authentication is not configured on the server.' })
-    return
+    if (!process.env.JWT_SECRET) {
+      response.status(500).json({ message: 'JWT secret is not configured on the server.' })
+      return
+    }
+
+    const adminUser = await prisma.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        passwordHash: true,
+      },
+    })
+
+    if (!adminUser || adminUser.role !== 'admin') {
+      response.status(401).json({ message: 'Invalid admin username or password.' })
+      return
+    }
+
+    const passwordMatches = await bcrypt.compare(password, adminUser.passwordHash)
+
+    if (!passwordMatches) {
+      response.status(401).json({ message: 'Invalid admin username or password.' })
+      return
+    }
+
+    const token = jwt.sign(
+      {
+        userId: adminUser.id,
+        role: adminUser.role,
+        username: adminUser.username,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '8h' },
+    )
+
+    response.json({ token })
+  } catch (error) {
+    next(error)
   }
-
-  if (username !== expectedUsername || password !== expectedPassword) {
-    response.status(401).json({ message: 'Invalid admin username or password.' })
-    return
-  }
-
-  const token = jwt.sign(
-    {
-      role: 'admin',
-      username,
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: '8h' },
-  )
-
-  response.json({ token })
 })
 
-router.get('/admin/session', requireAdminAuth, (request, response) => {
-  response.json({
-    ok: true,
-    admin: {
-      username: request.admin.username,
-    },
-  })
+router.get('/admin/session', requireAdminAuth, async (request, response, next) => {
+  try {
+    const adminUser = await prisma.user.findFirst({
+      where: {
+        id: request.admin.userId,
+        role: 'admin',
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+      },
+    })
+
+    if (!adminUser) {
+      response.status(401).json({ message: 'Invalid or expired admin session.' })
+      return
+    }
+
+    response.json({
+      ok: true,
+      admin: adminUser,
+    })
+  } catch (error) {
+    next(error)
+  }
 })
 
 export default router

@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
     <>
       <PageHeader
         title="Admin Login"
-        subtitle="Sign in with admin credentials to manage journal volumes, issues, and papers."
+        subtitle="Sign in with admin credentials to manage journal volumes, archives, and papers."
       />
 
       <section className="section">
