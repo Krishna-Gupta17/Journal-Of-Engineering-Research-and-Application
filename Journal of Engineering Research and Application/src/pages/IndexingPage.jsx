@@ -92,7 +92,7 @@ export default function IndexingPage() {
 
           <article className="license-card" aria-labelledby="cc-license-title">
             <h2 id="cc-license-title">Creative Commons License</h2>
-            <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+            <a rel="license"  href="http://creativecommons.org/licenses/by/4.0/">
               <img
                 alt="Creative Commons License"
                 src="https://i.creativecommons.org/l/by/4.0/88x31.png"
@@ -100,7 +100,11 @@ export default function IndexingPage() {
             </a>
             <p>
               This work is licensed under a{' '}
-              <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+              <a
+                rel="license noopener noreferrer"
+                target="_blank"
+                href="http://creativecommons.org/licenses/by/4.0/"
+              >
                 Creative Commons Attribution 4.0 International License
               </a>
               .
