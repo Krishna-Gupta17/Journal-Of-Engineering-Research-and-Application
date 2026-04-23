@@ -13,7 +13,7 @@ export default function AboutPage() {
 
           {/* Intro */}
           <p className="lead">
-            <strong>Journal of Engineering Research and Application (JERA)</strong> is a
+            <strong>Journal of Engineering Research and Application (JERA)</strong> is founded in 2022 and is a
             peer-reviewed academic journal primarily focused on civil and structural engineering.
             The journal also welcomes high-quality research across all related domains that address
             real-world engineering challenges from both practical and theoretical perspectives.
