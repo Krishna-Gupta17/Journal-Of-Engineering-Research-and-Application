@@ -103,12 +103,12 @@ export const editorialBoard = {
     },
   ],
   handlingEditor: [
-    {
-      name: 'Mr. Abhishek Prakash Paswan, Ph.D.*',
-      role: 'Handling Editor',
-      institution: 'Department of Civil Engineering, Delhi Technological University, Delhi, India',
-      email: 'handling.editor@jera-journal.org',
-    },
+    // {
+    //   name: 'Mr. Abhishek Prakash Paswan, Ph.D.*',
+    //   role: 'Handling Editor',
+    //   institution: 'Department of Civil Engineering, Delhi Technological University, Delhi, India',
+    //   email: 'handling.editor@jera-journal.org',
+    // },
     {
       name: 'Mr. Indrajeet Singh, Ph.D.*',
       role: 'Handling Editor',
