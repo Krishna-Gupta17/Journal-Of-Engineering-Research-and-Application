@@ -4,12 +4,15 @@ export default function Footer() {
   return (
     <footer className="site-footer" role="contentinfo">
       <div className="container footer-grid">
-        <div>
-          <h3>Journal of Engineering Research and Application</h3>
-          <p>
-            A peer-reviewed open access journal focused on advancing civil engineering
-            research and professional practice.
-          </p>
+        <div className="footer-logo-section">
+          <img src="/Jeralogo.jpeg" alt="JERA Logo" className="footer-logo" />
+          <div>
+            <h3>Journal of Engineering Research and Application</h3>
+            <p>
+              A peer-reviewed open access journal focused on advancing civil engineering
+              research and professional practice.
+            </p>
+          </div>
         </div>
 
         <nav aria-label="Footer navigation">

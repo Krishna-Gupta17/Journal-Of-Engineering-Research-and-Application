@@ -100,6 +100,19 @@ main {
   line-height: 1.2;
 }
 
+.logo-image {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.brand-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .menu-toggle {
   display: none;
   align-items: center;
@@ -1211,6 +1224,20 @@ main {
   gap: 1rem;
 }
 
+.indexing-logo-link {
+  text-decoration: none;
+  display: block;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.indexing-logo-link:hover {
+  transform: translateY(-4px);
+}
+
+.indexing-logo-link:hover .indexing-logo-card {
+  box-shadow: 0 8px 24px rgba(11, 60, 93, 0.15);
+}
+
 .indexing-logo-card {
   margin: 0;
   border: 1px solid var(--border);
@@ -1218,6 +1245,7 @@ main {
   background: #fff;
   box-shadow: var(--shadow);
   padding: 0.85rem;
+  transition: box-shadow 200ms ease;
 }
 
 .indexing-logo-card img {
@@ -1277,6 +1305,20 @@ main {
 
 .site-footer a:hover {
   color: var(--accent);
+}
+
+.footer-logo-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.footer-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .copyright {
@@ -1392,6 +1434,22 @@ main {
 
   .brand-issn {
     display: none;
+  }
+
+  .logo-image {
+    width: 42px;
+    height: 42px;
+  }
+
+  .footer-logo-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-logo {
+    width: 60px;
+    height: 60px;
   }
 
   .image-grid,

@@ -19,32 +19,53 @@ export default function IndexingPage() {
           <section className="indexing-logos" aria-labelledby="indexing-partners-title">
             <h2 id="indexing-partners-title">Indexing Partners</h2>
             <div className="indexing-logo-grid">
-              <figure className="indexing-logo-card">
-                <img
-                  src="https://informaticsglobal.com/wp-content/uploads/2023/04/J-Gate_Logo.png"
-                  alt="J-Gate indexing logo"
-                  loading="lazy"
-                />
-                <figcaption>J-Gate</figcaption>
-              </figure>
+              <a 
+                href="https://search.crossref.org/?q=+2583-3987&from_ui=yes" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="indexing-logo-link"
+              >
+                <figure className="indexing-logo-card">
+                  <img
+                    src="https://assets.crossref.org/logo/crossref-logo-landscape-100.png"
+                    alt="Crossref indexing logo"
+                    loading="lazy"
+                  />
+                  <figcaption>Crossref</figcaption>
+                </figure>
+              </a>
 
-              <figure className="indexing-logo-card">
-                <img
-                  src="https://www.ilovephd.com/wp-content/uploads/2022/01/Multidisciplinary-UGC-CARE-List-of-Journals.png"
-                  alt="UGC CARE List of Journals logo"
-                  loading="lazy"
-                />
-                <figcaption>UGC CARE</figcaption>
-              </figure>
+              <a 
+                href="https://openalex.org/S4387280128" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="indexing-logo-link"
+              >
+                <figure className="indexing-logo-card">
+                  <img
+                    src="https://openalex.org/img/tricon.a08e3fec.png"
+                    alt="Openalex logo"
+                    loading="lazy"
+                  />
+                  <figcaption>Openalex</figcaption>
+                </figure>
+              </a>
 
-              <figure className="indexing-logo-card">
-                <img
-                  src="https://blog.scienceopen.com/wp-content/uploads/2022/07/image-2.png"
-                  alt="ScienceOpen logo"
-                  loading="lazy"
-                />
-                <figcaption>ScienceOpen</figcaption>
-              </figure>
+              <a 
+                href="https://www.sudoc.fr/263957594" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="indexing-logo-link"
+              >
+                <figure className="indexing-logo-card">
+                  <img
+                    src="https://www.sudoc.abes.fr/htdocs/psi_images/img_psi/3.0/logos/abes_logo.gif"
+                    alt="Sudoc logo"
+                    loading="lazy"
+                  />
+                  <figcaption>Sudoc</figcaption>
+                </figure>
+              </a>
             </div>
           </section>
 

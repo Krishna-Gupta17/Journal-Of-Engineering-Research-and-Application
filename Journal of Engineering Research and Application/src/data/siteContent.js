@@ -75,9 +75,9 @@ export const editorialBoard = {
       email: 'editorialoffice@jera-journal.org',
     },
     {
-      name: 'Mr. Rahul Kumar Meena, Ph.D.*',
+      name: 'Dr. Rahul kumar meena',
       role: 'Managing Editor',
-      institution: 'Department of Civil Engineering, National Institute of Technology, Delhi, India',
+      institution: 'Assistant Professor, NIT Delhi, India',
       email: 'managing.editor@jera-journal.org',
     },
   ],

@@ -43,11 +43,13 @@ export default function Navbar() {
         
         {/* Logo */}
         <Link className="brand" to="/">
-          <span className="brand-mark">JERA</span>
-          <span className="brand-text">
-            Journal of Engineering Research and Application
-          </span>
-          <span className="brand-issn">E-ISSN: 2583-3987</span>
+          <img src="/Jeralogo.jpeg" alt="JERA Logo" className="logo-image" />
+          <div className="brand-text-group">
+            <span className="brand-text">
+              Journal of Engineering Research and Application
+            </span>
+            <span className="brand-issn">E-ISSN: 2583-3987</span>
+          </div>
         </Link>
 
         {/* Toggle Button */}
