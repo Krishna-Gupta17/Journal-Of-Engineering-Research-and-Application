@@ -1262,6 +1262,21 @@ main {
   text-align: center;
   color: var(--primary);
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.external-link-icon {
+  margin-left: 0.25rem;
+  opacity: 0.7;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.indexing-logo-link:hover .external-link-icon {
+  opacity: 1;
+  transform: translateX(2px) translateY(-2px);
 }
 
 .not-found {
