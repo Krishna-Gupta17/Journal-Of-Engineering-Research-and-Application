@@ -53,6 +53,7 @@ export default function Navbar() {
         </Link>
 
         {/* Toggle Button */}
+        
         <button
           className={`menu-toggle ${menuOpen ? 'open' : ''}`}
           aria-expanded={menuOpen}
