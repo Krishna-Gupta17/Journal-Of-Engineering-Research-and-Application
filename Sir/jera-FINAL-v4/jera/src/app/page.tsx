@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, Download, BookOpen, FileText, Users, Globe, Award, Clock, CheckCircle, ChevronRight, Bell, Layers } from 'lucide-react'
 import { ArticleCard } from '@/components/article/ArticleCard'
 import { SAMPLE_ARTICLES, ANNOUNCEMENTS, JOURNAL_METRICS, DISCIPLINES, EDITORIAL_BOARD_PREVIEW } from '@/lib/homeData'
-
+import { DynamicCurrentIssue } from '@/components/home/DynamicCurrentIssue'
 export default function HomePage() {
   return (
     <div className="bg-[var(--color-bg)]">
@@ -64,20 +64,7 @@ export default function HomePage() {
       {/* ARTICLES + SIDEBAR */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-12">
         <div className="flex gap-8 lg:gap-10">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <p className="section-label">Current Issue</p>
-                <h2 className="font-serif text-2xl font-bold text-navy-700 dark:text-white">Volume 1, Issue 1 — March 2026</h2>
-              </div>
-              <Link href="/current-issue" className="btn-secondary text-xs hidden sm:inline-flex items-center gap-1">View All <ChevronRight className="w-3 h-3" /></Link>
-            </div>
-            <div className="space-y-4">
-              {SAMPLE_ARTICLES.map(article => (
-                <ArticleCard key={article.id} article={article} variant="full" />
-              ))}
-            </div>
-          </div>
+          <DynamicCurrentIssue />
 
           {/* Sidebar */}
           <aside className="w-72 flex-shrink-0 hidden lg:flex flex-col gap-5">
