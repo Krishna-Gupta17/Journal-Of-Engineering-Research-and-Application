@@ -16,6 +16,10 @@ interface ArticleCardProps {
   variant?: 'full' | 'compact'
 }
 
+
+
+
+
 export function ArticleCard({ article, variant = 'full' }: ArticleCardProps) {
   return (
     <article className="article-card border-l-4 border-l-ocean-500">
