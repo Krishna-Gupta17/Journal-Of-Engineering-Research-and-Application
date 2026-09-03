@@ -1507,3 +1507,80 @@ main {
     height: 92vh;
   }
 }
+
+/* Maintenance Modal Styles */
+.maintenance-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(11, 60, 93, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+.maintenance-modal {
+  background: #fff;
+  border-radius: var(--radius, 12px);
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(11, 60, 93, 0.2);
+  animation: riseIn 400ms ease;
+  overflow: hidden;
+}
+
+.maintenance-modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border, #e5e5e5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fbfe;
+}
+
+.maintenance-modal-header h3 {
+  margin: 0;
+  color: var(--primary, #0b3c5d);
+  font-size: 1.25rem;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--secondary, #328cc1);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 150ms ease;
+}
+
+.close-button:hover {
+  background-color: rgba(50, 140, 193, 0.1);
+}
+
+.maintenance-modal-body {
+  padding: 1.5rem;
+  color: var(--ink, #333);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.maintenance-modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border, #e5e5e5);
+  display: flex;
+  justify-content: flex-end;
+  background: #f8fbfe;
+}
